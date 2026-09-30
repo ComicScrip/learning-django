@@ -4,3 +4,4 @@ django-filter==26.1
 psycopg[binary]==3.3.5
 gunicorn==26.2.0
 whitenoise==6.12.0
+mcp>=1.2.0,<2

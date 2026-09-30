@@ -1,0 +1,20 @@
+{
+	"servers": {
+		"django-tasks": {
+			"type": "stdio",
+			"command": "docker",
+			"args": [
+				"compose",
+				"-f",
+				"${workspaceFolder}/docker-compose.yml",
+				"run",
+				"--rm",
+				"-T",
+				"web",
+				"python",
+				"manage.py",
+				"mcp_serve"
+			]
+		}
+	}
+}
