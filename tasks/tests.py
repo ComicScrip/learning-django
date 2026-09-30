@@ -49,10 +49,23 @@ class TaskAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 1)
 
-    def test_anonymous_cannot_create_task(self):
+    def test_anonymous_can_create_task(self):
         response = self.client.post(reverse('task-list'), {'title': 'New task'})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Task.objects.count(), 2)
+
+    def test_anonymous_can_delete_task(self):
+        url = reverse('task-detail', args=[self.task.id])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Task.objects.count(), 0)
+
+    def test_anonymous_cannot_update_task(self):
+        url = reverse('task-detail', args=[self.task.id])
+        response = self.client.patch(url, {'completed': True})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(Task.objects.count(), 1)
+        self.task.refresh_from_db()
+        self.assertFalse(self.task.completed)
 
     def test_authenticated_user_can_create_task(self):
         self.client.force_login(self.user)

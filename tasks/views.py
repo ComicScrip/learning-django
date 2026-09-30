@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import AllowAny
 
 from .models import Task
 from .serializers import TaskSerializer
@@ -15,4 +16,11 @@ class TaskViewSet(viewsets.ModelViewSet):
     filterset_fields = ['completed']
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'updated_at', 'title']
+
+    def get_permissions(self):
+        # Anyone (even unauthenticated) may create or delete tasks; other
+        # actions fall back to the project default (IsAuthenticatedOrReadOnly).
+        if self.action in ('create', 'destroy'):
+            return [AllowAny()]
+        return super().get_permissions()
 
